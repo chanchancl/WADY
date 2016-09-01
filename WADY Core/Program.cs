@@ -11,25 +11,53 @@ namespace WADY.Core
 {
     class Program
     {
-
         static void Main(string[] args)
         {
+            //Console.Title = "What are you doing?  in console";
+
+            System.DateTime TaskStart = DateTime.Now;
+
             WADYProcessHelper helper = new WADYProcessHelper();
             helper.StartTask();
+            
             while (true)
             {
                 var list = helper.QueryTotalTimeList();
                 int count = 1;
+                Console.WriteLine("{0}  {1,10}   {2,30}           {3,20}", 
+                    "排序","进程","进程名","运行时间");
 
                 foreach(var item in list)
                 {
-                    Console.WriteLine("{0}. {1} 在前台运行了 {2} s   {3}",count, item.ProcessDescription, item.TotalTime, Process.GetCurrentProcess().TotalProcessorTime);
+                    // 40 为对齐长度
+                    int ChineseLetter = ChineseLetterCount(item.ProcessDescription);
+                    int EnglishLetter = item.ProcessDescription.Length - ChineseLetter;
+                    int WhiteSpace = 40 - (ChineseLetter*2 + EnglishLetter);
+                    string white = new string(' ', WhiteSpace);
+
+                    Console.WriteLine("{0,2}.  {1}{2}   {3,-20}      {4,20} s   ({5:f2}%)",
+                      count,
+                      item.ProcessDescription,
+                      white,
+                      item.ProcessName,
+                      item.TotalTime,
+                      ((double)(item.TotalTime.TotalMilliseconds/(DateTime.Now - TaskStart).TotalMilliseconds))*100);
                     count++;
                 }
+                
                 Thread.Sleep(500);
                 Console.Clear();
-                
+
+                Console.WriteLine("记录开始于{0},到现在经过了{1:hh\\:mm\\:ss\\.ff}", TaskStart, DateTime.Now - TaskStart);
             }
+        }
+
+        //对齐专用
+        public static int ChineseLetterCount(string strText)
+        {
+            byte[] byts = Encoding.GetEncoding("gb2312").GetBytes(strText);
+
+            return byts.Length - strText.Length;
         }
 
     }
@@ -95,7 +123,7 @@ namespace WADY.Core
             LastProcessName = "";
             Error = false;
 
-            TimerTick = 500;
+            TimerTick = 333;
         }
 
         #region 导入Win32函数
@@ -106,7 +134,7 @@ namespace WADY.Core
         public static extern uint GetWindowThreadProcessId(IntPtr hWnd, ref uint lpdwProcessId);
         #endregion
         //public static void Update()
-        public string CurrentProcess()
+        public string GetCurrentProcess()
         {
             IntPtr CurrentWindow = (IntPtr)0;
             uint CurrentWindowId = 0 ;
@@ -265,15 +293,35 @@ namespace WADY.Core
         {
             if (TaskTimer != null)
                 return false;
-            TaskTimer = new Timer(TaskExecute,null,0, TimerTick);
+
+            TaskTimer = new Timer(delegate(object obj) {
+                //if(obj is Timer)
+                this.GetCurrentProcess();
+            }, null,0, TimerTick);
 
             return true;
         }
-        void TaskExecute(object obj)
-        {
-            this.CurrentProcess();
-        }
 
+        /*public bool ReStartTask(int timerTick = 500)
+        {
+            if (TaskTimer != null)
+                TaskTimer.Dispose();
+
+            TimerTick = timerTick;
+            StartTask();
+
+            return true;
+        }
+        public bool PauseTask()
+        {
+            if (TaskTimer == null)
+                return false;
+
+            // 不知道会不会立即生效
+            TaskTimer.Change(0xefffff, 0xeffffff);
+
+            return true;
+        }*/
 
 
 
