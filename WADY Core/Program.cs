@@ -103,19 +103,20 @@ namespace WADY.Core
                 public DateTime Start; // 切换到的时间
                 public TimeSpan Last;  // 这次的持续时间
             }
-            public string ProcessName; // 进程名
-            public string ProcessPath; // 进程的路径  有些进程，比如任务管理器，会拒绝这一请求
-            public string ProcessDescription; // 进程的文件描述
+            public string ProcessName { get; set; } // 进程名
+            public string ProcessPath { get; set; }  // 进程的路径  有些进程，比如任务管理器，会拒绝这一请求
+            public string ProcessDescription { get; set; }  // 进程的文件描述
 
-            public TimeSpan TotalTime;
-            public List<TimeInfo> ProcessTimeInfo;
+            public TimeSpan TotalTime { get; set; }
+            public List<TimeInfo> ProcessTimeInfo { get; set; }
         }
 
         public bool Error;
         public string LastProcessName; // 用来确认一个进程是否持续在前台。
-        Dictionary<string, ProcessInfo> InfoMap { get; }
+        public Dictionary<string, ProcessInfo> InfoMap { get; }
         Timer TaskTimer;
         int TimerTick;
+        List<Delegate> TickDelegate;
 
         public WADYProcessHelper()
         {
@@ -124,6 +125,7 @@ namespace WADY.Core
             Error = false;
 
             TimerTick = 333;
+            TickDelegate = new List<Delegate>();
         }
 
         #region 导入Win32函数
@@ -137,7 +139,7 @@ namespace WADY.Core
         public string GetCurrentProcess()
         {
             IntPtr CurrentWindow = (IntPtr)0;
-            uint CurrentWindowId = 0 ;
+            uint CurrentWindowId = 0;
             Process CurrentWindowProcess;
 
             ProcessInfo CurInfo = null;
@@ -152,13 +154,13 @@ namespace WADY.Core
                     return "";
                 GetWindowThreadProcessId(CurrentWindow, ref CurrentWindowId);
                 CurrentWindowProcess = Process.GetProcessById((int)CurrentWindowId);
-                
-                string Description="",Path="",Name;
+
+                string Description = "", Path = "", Name;
 
                 Name = CurrentWindowProcess.ProcessName;
 
                 // 这个进程是否是 Universal(UWP) 应用
-                if(Name == "ApplicationFrameHost")
+                if (Name == "ApplicationFrameHost")
                 {
                     #region dog die
                     /*IntPtr tCurrentWindow = (IntPtr)0;
@@ -191,13 +193,13 @@ namespace WADY.Core
                     }*/
                     #endregion
 
-                    Name = CurrentWindowProcess.MainWindowTitle+ " " + Name;
+                    Name = CurrentWindowProcess.MainWindowTitle;
                 }
                 if (!this.InfoMap.ContainsKey(Name))
                 {
                     // 并没有改名字的记录
                     try
-                    { 
+                    {
                         Description = CurrentWindowProcess.MainModule.FileVersionInfo.FileDescription;
                     }
                     catch
@@ -277,18 +279,22 @@ namespace WADY.Core
 
                 this.LastProcessName = Name;
 
-                return CurInfo.ProcessPath + "   " + CurInfo.ProcessName + "\n" + CurInfo.ProcessDescription + "  " ;
+                return CurInfo.ProcessPath + "   " + CurInfo.ProcessName + "\n" + CurInfo.ProcessDescription + "  ";
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Console.WriteLine("Message {0}, Source {1}\n{2}", e.Message,e.Source,e.StackTrace);
+                Console.WriteLine("Message {0}, Source {1}\n{2}", e.Message, e.Source, e.StackTrace);
                 //Error = true;
             }
             return "";
         }
 
-        
+        public void AddDelgate(Action listViewUpdate)
+        {
+            if(!TickDelegate.Contains(listViewUpdate))
+                TickDelegate.Add(listViewUpdate);
 
+        }
         public bool StartTask()
         {
             if (TaskTimer != null)
@@ -297,6 +303,10 @@ namespace WADY.Core
             TaskTimer = new Timer(delegate(object obj) {
                 //if(obj is Timer)
                 this.GetCurrentProcess();
+                foreach(var d in this.TickDelegate)
+                {
+                    d.DynamicInvoke(); 
+                }
             }, null,0, TimerTick);
 
             return true;
@@ -373,6 +383,8 @@ namespace WADY.Core
 
             return ret;
         }
+
+        
 
         /*
         1.查询记录数目
