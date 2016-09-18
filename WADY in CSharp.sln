@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WADY GUI", "WADY GUI\WADY GUI.csproj", "{E847A5CE-191D-449E-8B3E-04C1EA874E57}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WADY Core", "WADY Core\WADY Core.csproj", "{B64969FE-7875-41DB-9C46-81A00190FDF7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WADY Core", "WADY Core\WADY Core.csproj", "{EA6F1D6A-7FC7-46F3-9697-CFEACD99E1FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{E847A5CE-191D-449E-8B3E-04C1EA874E57}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E847A5CE-191D-449E-8B3E-04C1EA874E57}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E847A5CE-191D-449E-8B3E-04C1EA874E57}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B64969FE-7875-41DB-9C46-81A00190FDF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B64969FE-7875-41DB-9C46-81A00190FDF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B64969FE-7875-41DB-9C46-81A00190FDF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B64969FE-7875-41DB-9C46-81A00190FDF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA6F1D6A-7FC7-46F3-9697-CFEACD99E1FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA6F1D6A-7FC7-46F3-9697-CFEACD99E1FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA6F1D6A-7FC7-46F3-9697-CFEACD99E1FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA6F1D6A-7FC7-46F3-9697-CFEACD99E1FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

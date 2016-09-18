@@ -129,12 +129,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WADY Core\WADY Core.csproj">
-      <Project>{b64969fe-7875-41db-9c46-81a00190fdf7}</Project>
-      <Name>WADY Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
@@ -151,6 +145,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WADY Core\WADY Core.csproj">
+      <Project>{ea6f1d6a-7fc7-46f3-9697-cfeacd99e1fb}</Project>
+      <Name>WADY Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

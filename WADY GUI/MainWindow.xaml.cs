@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using WADY.Core;
+using WADY_Core;
 using System.Threading;
 using System.Diagnostics;
 using System.Collections.Generic;
@@ -33,8 +33,8 @@ namespace WADY_GUI
         [DllImport("coredll.dll", SetLastError = true)]
         private static extern IntPtr ExtractIconEx(string fileName, int index, ref IntPtr hIconLarge, ref IntPtr hIconSmall, uint nIcons);
         //List<WADY.Core.WADYProcessHelper.ProcessInfo> bindingData;
-        ObservableCollection<WADYProcessHelper.ProcessInfo> bindingData
-            = new ObservableCollection<WADYProcessHelper.ProcessInfo>();
+        ObservableCollection<ProcessInfo> bindingData
+            = new ObservableCollection<ProcessInfo>();
 
         public delegate void UpdateUIDelegate();
         private void ListViewUpdate()

@@ -1,0 +1,301 @@
+﻿using System;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+
+namespace WADY_Core
+{
+    // 记录一段时间，起点 与 持续时间
+    public class TimeInfo
+    {
+        public DateTime Start; // 切换到的时间
+        public TimeSpan Last;  // 这次的持续时间
+    }
+
+    public class ProcessInfo
+    {
+        public ProcessInfo()
+        {
+            ProcessTimeInfo = new List<TimeInfo>();
+            TotalTime = TimeSpan.Zero;
+        }
+
+        public string ProcessName { get; set; } // 进程名
+        public string ProcessPath { get; set; }  // 进程的路径  有些进程，比如任务管理器，会拒绝这一请求
+        public string ProcessDescription { get; set; }  // 进程的文件描述
+
+        public TimeSpan TotalTime { get; set; }
+        public List<TimeInfo> ProcessTimeInfo { get; set; }
+
+    }
+
+    public class WADYProcessHelper
+    {
+
+        #region data struct
+        /*
+         * InfoMap 
+         *    | -- ProcessName1 -> ProcessInfo1
+         *    |                         | -- Name,Path,Description,
+         *    |                              TotalTime,ProcessTimeInfo(It's a list)
+         *    |                                               | -- TimeInfo5, TimeInfo4, ... ,TimeInfo1
+         *    |                                                    (倒序排列)
+         *    | -- ProcessName2 -> ProcessInfo2
+         *    | -- ProcessName3 -> ProcessInfo3
+         *    
+         *  
+         *    
+        */
+
+        /*
+            记录一个进程的使用情况
+            同名的进程，将使用相同信息，这个信息使用一个Dictionary，由进程名，映射到该结构。
+
+            TotalTime为这个进程在前台的总时间。
+
+            ProcessTimeInfo为一个列表，记录了每次切换到该进程时的时间，以及使用时间（截止到切换别的进程）
+            这个列表倒着排列，
+
+        */
+        #endregion
+
+
+        public WADYProcessHelper()
+        {
+            InfoMap = new Dictionary<string, ProcessInfo>();
+            OrderedProcessList = new List<ProcessInfo>();
+            LastProcessName = "";
+
+            TimerTick = 500;
+            TickDelegate = new List<Delegate>();
+        }
+
+        #region 导入Win32函数
+        [DllImport("user32.dll", EntryPoint = "GetForegroundWindow")]
+        public static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll", EntryPoint = "GetWindowThreadProcessId")]
+        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, ref uint lpdwProcessId);
+        #endregion
+        //public static void Update()
+
+        bool IsHaveProcessInfo(string name)
+        {
+            return InfoMap.ContainsKey(name);
+        }
+        bool IsLastProcess(string name)
+        {
+            return name == this.LastProcessName;
+        }
+
+        ProcessInfo GetCurrentProcessInfo()
+        {
+            IntPtr CurrentWindowHandle = (IntPtr)0;
+            uint CurrentWindowId = 0;
+
+            Process CurrentWindowProcess;
+            ProcessInfo CurrentInfo;
+            TimeInfo CurrentTime;
+
+            CurrentWindowHandle = GetForegroundWindow();
+
+            // 是否成功获得有效的句柄
+            if (CurrentWindowHandle.ToInt32() == 0)
+                throw new Exception("Get invalid window handle.");
+
+            GetWindowThreadProcessId(CurrentWindowHandle, ref CurrentWindowId);
+            CurrentWindowProcess = Process.GetProcessById((int)CurrentWindowId);
+
+            string Description = "", Path = "", Name;
+
+            Name = CurrentWindowProcess.ProcessName;
+
+            // 这个进程是否是 Universal(UWP) 应用
+            if (Name == "ApplicationFrameHost")
+            {
+                #region dog die
+                /*IntPtr tCurrentWindow = (IntPtr)0;
+                uint tCurrentWindowId = 0;
+                Process tCurrentWindowProcess;
+
+                tCurrentWindow = FindWindow(null, CurrentWindowProcess.MainWindowTitle);
+                GetWindowThreadProcessId(tCurrentWindow, ref tCurrentWindowId);
+                tCurrentWindowProcess = Process.GetProcessById((int)tCurrentWindowId);*/
+                // Dog die,并不能通过 FindWindow找到真正进程的句柄，但貌似可以用FileDescription来找
+
+                /*Process[] AllProcess = Process.GetProcesses();
+
+                foreach (var CurProc in  AllProcess)
+                {
+                    try
+                    {
+                        if (CurProc.MainModule.FileVersionInfo.FileDescription == CurrentWindowProcess.MainWindowTitle)
+                        {
+                            Console.WriteLine(CurProc.MainWindowTitle);
+                            int a = 5;
+                        }
+
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+
+                }*/
+                #endregion
+
+                Name = CurrentWindowProcess.MainWindowTitle;
+            }
+            if (!IsHaveProcessInfo(Name))
+            {
+                // 并没有改名字的记录
+                try
+                {
+                    Description = CurrentWindowProcess.MainModule.FileVersionInfo.FileDescription;
+                }
+                catch
+                {
+                    Description = CurrentWindowProcess.MainWindowTitle;
+                }
+                try
+                {
+                    Path = CurrentWindowProcess.MainModule.FileName;
+                }
+                catch
+                {
+                    Path = "\\";
+                }
+
+                // 创建信息结构
+                CurrentInfo = new ProcessInfo();
+                CurrentInfo.ProcessName = Name;
+                CurrentInfo.ProcessPath = Path;
+                CurrentInfo.ProcessDescription = Description;
+
+                // 创建时间信息
+                CurrentTime = new TimeInfo();
+                CurrentTime.Start = DateTime.Now;
+                CurrentTime.Last = TimeSpan.Zero;
+                CurrentInfo.ProcessTimeInfo.Insert(0, CurrentTime);
+
+                // 通过名字映射一下
+                InfoMap[Name] = CurrentInfo;
+                OrderedProcessList.Add(CurrentInfo);
+            }
+            else
+                CurrentInfo = InfoMap[Name];
+
+            this.LastProcessName = Name;
+
+            return CurrentInfo;
+        }
+
+        public void UpdateProcess()
+        {
+            ProcessInfo CurrentInfo;
+            TimeInfo thisTime;
+
+            // 从名字获取映射的数据
+            CurrentInfo = GetCurrentProcessInfo();
+            if (IsLastProcess(CurrentInfo.ProcessName))
+            {
+                // 说明在WADY sleep的时候，进程没有切换
+
+                thisTime = CurrentInfo.ProcessTimeInfo.First();
+                TimeSpan tmpLast = thisTime.Last;
+                thisTime.Last = new TimeSpan((DateTime.Now - thisTime.Start).Ticks);
+                CurrentInfo.TotalTime = CurrentInfo.TotalTime + (thisTime.Last - tmpLast);
+            }
+            else
+            {
+                thisTime = new TimeInfo();
+                thisTime.Start = DateTime.Now;
+                thisTime.Last = TimeSpan.Zero;
+
+                CurrentInfo.ProcessTimeInfo.Insert(0, thisTime);
+            }
+
+            OrderedProcessList.Sort(delegate (ProcessInfo left, ProcessInfo right)
+            {
+                if (left.TotalTime > right.TotalTime)
+                    return -1;
+                return 1;
+            });
+
+        }
+
+        public void AddDelgate(Action listViewUpdate)
+        {
+            if (!TickDelegate.Contains(listViewUpdate))
+                TickDelegate.Add(listViewUpdate);
+
+        }
+        public bool StartTask()
+        {
+            if (TaskTimer != null)
+                return false;
+
+            TaskTimer = new Timer(delegate (object obj)
+            {
+                //if(obj is Timer)
+                this.UpdateProcess();
+                foreach (var d in this.TickDelegate)
+                {
+                    d.DynamicInvoke();
+                }
+            }, null, 0, TimerTick);
+
+            return true;
+        }
+
+        //下面定义一些查询接口
+        /// <summary>
+        /// 获取在MapInfo中进程的个数
+        /// </summary>
+        /// <returns></returns>
+        public int QueryInfoCount()
+        {
+            return InfoMap.Count;
+        }
+        /// <summary>
+        /// 获取指定进程的 信息。
+        /// </summary>
+        /// <param name="processName">指定进程的名字</param>
+        /// <returns></returns>
+        public ProcessInfo QueryProcessInfo(string processName)
+        {
+            try
+            {
+                return this.InfoMap[processName];
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        /// <summary>
+        /// 按总时间降序排列 Process
+        /// </summary>
+        /// <returns>返回一个列表，这个列表中的</returns>
+        public List<ProcessInfo> QueryTotalTimeList()
+        {
+            return OrderedProcessList;
+        }
+
+
+        string LastProcessName; // 用来确认一个进程是否持续在前台。
+
+        Timer TaskTimer;
+        int TimerTick;
+
+        List<ProcessInfo> OrderedProcessList;
+        List<Delegate> TickDelegate;
+        Dictionary<string, ProcessInfo> InfoMap;
+    }
+
+
+}
