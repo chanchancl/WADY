@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WADY_GUI"
-        x:Class="WADY_GUI.MainWindow"
+        xmlns:local="clr-namespace:WADY.GUI"
+        x:Class="WADY.GUI.MainWindow"
         mc:Ignorable="d"
         Title="MainWindow" Height="auto" Width="auto" Loaded="Window_Loaded" >
     <Grid>
@@ -25,7 +25,7 @@
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <Grid >
-                                                <Grid.ColumnDefinitions>
+                                                <Grid.ColumnDefinitions> 
                                                     <ColumnDefinition Width="64" ></ColumnDefinition>
                                                     <ColumnDefinition MinWidth="128" ></ColumnDefinition>
                                                 </Grid.ColumnDefinitions>
@@ -36,7 +36,8 @@
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
                                 <GridViewColumn Header="进程名" DisplayMemberBinding="{Binding Path= ProcessName}" Width="70"/>
-                                <GridViewColumn Header="前台时间" DisplayMemberBinding="{Binding Path= TotalTime}" Width="70"/>
+                                <GridViewColumn Header="前台时间" DisplayMemberBinding="{Binding Path= TotalTime}" Width="77"/>
+                                <GridViewColumn Header="启动时间" DisplayMemberBinding="{Binding Path= ProcessTimeInfo.Last.Start}" Width="77"/>
                                 <GridViewColumn Header="路径" DisplayMemberBinding="{Binding Path= ProcessPath}" Width="350"/>
                             </GridView>
                         </ListView.View>
@@ -47,13 +48,14 @@
                 <Grid Background="#FFE5E5E5"/>
             </TabItem>
         </TabControl>
-        <ListView x:Name="listView1" HorizontalAlignment="Left" Height="83" Margin="0,371,0,0" VerticalAlignment="Top" Width="174">
+        <ListView x:Name="listView1" HorizontalAlignment="Left" Height="125" Margin="0,371,0,0" VerticalAlignment="Top" Width="752">
             <ListView.View>
                 <GridView>
                     <GridViewColumn/>
                 </GridView>
             </ListView.View>
         </ListView>
+        <Path Data="M669.1,-12.9" Fill="#FFF4F4F5" HorizontalAlignment="Right" Height="1" Margin="0,-12.9,91.5,0" Stretch="Fill" Stroke="Black" VerticalAlignment="Top" Width="1"/>
 
     </Grid>
 </Window>

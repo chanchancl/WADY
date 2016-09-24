@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using WADY_Core;
+using WADY.Core;
 using System.Threading;
 using System.Diagnostics;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.Data;
 using System.Runtime.InteropServices;
 using System.Collections.ObjectModel;
 
-namespace WADY_GUI
+namespace WADY.GUI
 {
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
@@ -63,14 +63,15 @@ namespace WADY_GUI
         private void update()
         {
             //对Listview绑定的数据源进行更新
-            var tmpData = helper.QueryTotalTimeList();
+            var DataList = helper.QueryTotalTimeList();
             bindingData.Clear();
-            foreach (var i in tmpData)
+            foreach (var i in DataList)
             {
                 bindingData.Add(i);
             }
-            
-            
+
+
+
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -114,6 +115,7 @@ namespace WADY_GUI
             //var col = GridView.GetColumnCollection(listView);
 
             listView.ItemsSource = bindingData;
+            var col = GridView.GetColumnCollection(listView);
 
         }
 

@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace WADY_Core
+namespace WADY.Core
 {
     // 记录一段时间，起点 与 持续时间
     public class TimeInfo
@@ -70,7 +70,7 @@ namespace WADY_Core
             OrderedProcessList = new List<ProcessInfo>();
             LastProcessName = "";
 
-            TimerTick = 500;
+            TimerTick = 333;
             TickDelegate = new List<Delegate>();
         }
 
@@ -96,24 +96,20 @@ namespace WADY_Core
         {
             IntPtr CurrentWindowHandle = (IntPtr)0;
             uint CurrentWindowId = 0;
-
             Process CurrentWindowProcess;
             ProcessInfo CurrentInfo;
             TimeInfo CurrentTime;
 
             CurrentWindowHandle = GetForegroundWindow();
-
             // 是否成功获得有效的句柄
             if (CurrentWindowHandle.ToInt32() == 0)
-                throw new Exception("Get invalid window handle.");
+                return null;
 
             GetWindowThreadProcessId(CurrentWindowHandle, ref CurrentWindowId);
             CurrentWindowProcess = Process.GetProcessById((int)CurrentWindowId);
 
             string Description = "", Path = "", Name;
-
             Name = CurrentWindowProcess.ProcessName;
-
             // 这个进程是否是 Universal(UWP) 应用
             if (Name == "ApplicationFrameHost")
             {
@@ -147,7 +143,6 @@ namespace WADY_Core
 
                 }*/
                 #endregion
-
                 Name = CurrentWindowProcess.MainWindowTitle;
             }
             if (!IsHaveProcessInfo(Name))
@@ -188,9 +183,7 @@ namespace WADY_Core
             }
             else
                 CurrentInfo = InfoMap[Name];
-
-            this.LastProcessName = Name;
-
+            LastProcessName = Name;
             return CurrentInfo;
         }
 
@@ -201,6 +194,8 @@ namespace WADY_Core
 
             // 从名字获取映射的数据
             CurrentInfo = GetCurrentProcessInfo();
+            if (CurrentInfo == null)
+                return;
             if (IsLastProcess(CurrentInfo.ProcessName))
             {
                 // 说明在WADY sleep的时候，进程没有切换
@@ -215,7 +210,7 @@ namespace WADY_Core
                 thisTime = new TimeInfo();
                 thisTime.Start = DateTime.Now;
                 thisTime.Last = TimeSpan.Zero;
-
+           
                 CurrentInfo.ProcessTimeInfo.Insert(0, thisTime);
             }
 
@@ -242,8 +237,8 @@ namespace WADY_Core
             TaskTimer = new Timer(delegate (object obj)
             {
                 //if(obj is Timer)
-                this.UpdateProcess();
-                foreach (var d in this.TickDelegate)
+                UpdateProcess();
+                foreach (var d in TickDelegate)
                 {
                     d.DynamicInvoke();
                 }
@@ -270,7 +265,7 @@ namespace WADY_Core
         {
             try
             {
-                return this.InfoMap[processName];
+                return InfoMap[processName];
             }
             catch
             {
@@ -285,7 +280,10 @@ namespace WADY_Core
         {
             return OrderedProcessList;
         }
-
+        public Dictionary<string, ProcessInfo> QueryTotalTimeMap()
+        {
+            return InfoMap;
+        }
 
         string LastProcessName; // 用来确认一个进程是否持续在前台。
 
