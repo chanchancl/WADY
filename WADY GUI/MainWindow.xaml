@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WADY.GUI"
         x:Class="WADY.GUI.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="auto" Width="auto" Loaded="Window_Loaded" >
+        Title="MainWindow" Loaded="Window_Loaded" >
     <Grid>
         <Menu x:Name="menu" HorizontalAlignment="Left" Height="20" Margin="0,0,-0.4,0" VerticalAlignment="Top" Width="762">
             <MenuItem Header="我是谁">

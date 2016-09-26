@@ -116,7 +116,6 @@ namespace WADY.GUI
 
             listView.ItemsSource = bindingData;
             var col = GridView.GetColumnCollection(listView);
-
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
