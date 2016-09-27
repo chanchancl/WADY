@@ -37,7 +37,7 @@
                                 </GridViewColumn>
                                 <GridViewColumn Header="进程名" DisplayMemberBinding="{Binding Path= ProcessName}" Width="70"/>
                                 <GridViewColumn Header="前台时间" DisplayMemberBinding="{Binding Path= TotalTime}" Width="77"/>
-                                <GridViewColumn Header="启动时间" DisplayMemberBinding="{Binding Path= ProcessTimeInfo.Last.Start}" Width="77"/>
+                                <GridViewColumn Header="启动时间" DisplayMemberBinding="{Binding Path= StartTime}" Width="77"/>
                                 <GridViewColumn Header="路径" DisplayMemberBinding="{Binding Path= ProcessPath}" Width="350"/>
                             </GridView>
                         </ListView.View>

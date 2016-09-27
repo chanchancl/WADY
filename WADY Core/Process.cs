@@ -12,6 +12,11 @@ namespace WADY.Core
     // 记录一段时间，起点 与 持续时间
     public class TimeInfo
     {
+        public TimeInfo()
+        {
+            Start = DateTime.Now;
+            Last = TimeSpan.Zero;
+        }
         public DateTime Start; // 切换到的时间
         public TimeSpan Last;  // 这次的持续时间
     }
@@ -22,11 +27,34 @@ namespace WADY.Core
         {
             ProcessTimeInfo = new List<TimeInfo>();
             TotalTime = TimeSpan.Zero;
+            StartTime = DateTime.Now;
+        }
+
+        public ProcessInfo(Process process) : this()
+        {
+            ProcessName = process.ProcessName;
+            try
+            {
+                ProcessDescription = process.MainModule.FileVersionInfo.FileDescription;
+            }
+            catch
+            {
+                ProcessDescription = process.MainWindowTitle;
+            }
+            try
+            {
+                ProcessPath = process.MainModule.FileName;
+            }
+            catch
+            {
+                ProcessPath = "\\";
+            }
         }
 
         public string ProcessName { get; set; } // 进程名
         public string ProcessPath { get; set; }  // 进程的路径  有些进程，比如任务管理器，会拒绝这一请求
         public string ProcessDescription { get; set; }  // 进程的文件描述
+        public DateTime StartTime { get; set; }         // 进程的开启时间
 
         public TimeSpan TotalTime { get; set; }
         public List<TimeInfo> ProcessTimeInfo { get; set; }
@@ -98,7 +126,6 @@ namespace WADY.Core
             uint CurrentWindowId = 0;
             Process CurrentWindowProcess;
             ProcessInfo CurrentInfo;
-            TimeInfo CurrentTime;
 
             CurrentWindowHandle = GetForegroundWindow();
             // 是否成功获得有效的句柄
@@ -107,8 +134,9 @@ namespace WADY.Core
 
             GetWindowThreadProcessId(CurrentWindowHandle, ref CurrentWindowId);
             CurrentWindowProcess = Process.GetProcessById((int)CurrentWindowId);
+            
 
-            string Description = "", Path = "", Name;
+            string Name;
             Name = CurrentWindowProcess.ProcessName;
             // 这个进程是否是 Universal(UWP) 应用
             if (Name == "ApplicationFrameHost")
@@ -148,34 +176,12 @@ namespace WADY.Core
             if (!IsHaveProcessInfo(Name))
             {
                 // 并没有改名字的记录
-                try
-                {
-                    Description = CurrentWindowProcess.MainModule.FileVersionInfo.FileDescription;
-                }
-                catch
-                {
-                    Description = CurrentWindowProcess.MainWindowTitle;
-                }
-                try
-                {
-                    Path = CurrentWindowProcess.MainModule.FileName;
-                }
-                catch
-                {
-                    Path = "\\";
-                }
 
                 // 创建信息结构
-                CurrentInfo = new ProcessInfo();
-                CurrentInfo.ProcessName = Name;
-                CurrentInfo.ProcessPath = Path;
-                CurrentInfo.ProcessDescription = Description;
-
+                CurrentInfo = new ProcessInfo(CurrentWindowProcess);
+                
                 // 创建时间信息
-                CurrentTime = new TimeInfo();
-                CurrentTime.Start = DateTime.Now;
-                CurrentTime.Last = TimeSpan.Zero;
-                CurrentInfo.ProcessTimeInfo.Insert(0, CurrentTime);
+                CurrentInfo.ProcessTimeInfo.Insert(0, new TimeInfo());
 
                 // 通过名字映射一下
                 InfoMap[Name] = CurrentInfo;
@@ -278,6 +284,10 @@ namespace WADY.Core
         /// <returns>返回一个列表，这个列表中的</returns>
         public List<ProcessInfo> QueryTotalTimeList()
         {
+            // 这里的话，有一个小概率事件，当ProcessInfo添加进 OrderedProcessList后，
+            // OrderedProcessLsit完成排序之前，调用QueryTotalTimeList，就有可能得到一个
+            // UnOrderedList,这个可能和List的排序速度有关吧。反正测试过程中我还没遇到过
+            // 到后面可以考虑在这里加一个锁
             return OrderedProcessList;
         }
         public Dictionary<string, ProcessInfo> QueryTotalTimeMap()
