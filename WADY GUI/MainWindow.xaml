@@ -8,54 +8,53 @@
         mc:Ignorable="d"
         Title="MainWindow" Loaded="Window_Loaded" >
     <Grid>
-        <Menu x:Name="menu" HorizontalAlignment="Left" Height="20" Margin="0,0,-0.4,0" VerticalAlignment="Top" Width="762">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"></RowDefinition>
+            <RowDefinition Height="3*"></RowDefinition>
+            <RowDefinition Height="2*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0" x:Name="menu" Height="20" Margin="0,0,-0.4,0" VerticalAlignment="Top">
             <MenuItem Header="我是谁">
                 <MenuItem Header="退出" HorizontalAlignment="Left" Width="144" Click="MenuItem_Click"/>
             </MenuItem>
-
             <MenuItem Header="杰尼龟！！"/>
         </Menu>
-        <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="346" Margin="0,20,-0.4,0" VerticalAlignment="Top" Width="762">
+        <TabControl Grid.Row="1" x:Name="tabControl" HorizontalAlignment="Left"  VerticalAlignment="Top">
             <TabItem Header="TabItem">
-                <Grid >
-                    <ListView x:Name="listView" HorizontalAlignment="Left" Height="319" VerticalAlignment="Top" Width="756">
-                        <ListView.View>
-                            <GridView x:Name="listColumn">
-                                <GridViewColumn Header="进程" Width="150" >
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <Grid >
-                                                <Grid.ColumnDefinitions> 
-                                                    <ColumnDefinition Width="64" ></ColumnDefinition>
-                                                    <ColumnDefinition MinWidth="128" ></ColumnDefinition>
-                                                </Grid.ColumnDefinitions>
-                                                <Image Source="{Binding Pic}"/>
-                                                <TextBlock Text="{Binding ProcessDescription}" Grid.Column="1"/>
-                                            </Grid>
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                                <GridViewColumn Header="进程名" DisplayMemberBinding="{Binding Path= ProcessName}" Width="70"/>
-                                <GridViewColumn Header="前台时间" DisplayMemberBinding="{Binding Path= TotalTime}" Width="77"/>
-                                <GridViewColumn Header="启动时间" DisplayMemberBinding="{Binding Path= StartTime}" Width="77"/>
-                                <GridViewColumn Header="路径" DisplayMemberBinding="{Binding Path= ProcessPath}" Width="350"/>
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
-                </Grid>
+                <ListView x:Name="listView"  VerticalAlignment="Top" >
+                    <ListView.View>
+                        <GridView x:Name="listColumn">
+                            <GridViewColumn Header="进程" Width="150" >
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid >
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="64" ></ColumnDefinition>
+                                                <ColumnDefinition MinWidth="128" ></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+                                            <Image Source="{Binding Pic}"/>
+                                            <TextBlock Text="{Binding ProcessDescription}" Grid.Column="1"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="进程名" DisplayMemberBinding="{Binding Path= ProcessName}" Width="70"/>
+                            <GridViewColumn Header="前台时间" DisplayMemberBinding="{Binding Path= TotalTime}" Width="77"/>
+                            <GridViewColumn Header="启动时间" DisplayMemberBinding="{Binding Path= StartTime}" Width="100"/>
+                            <GridViewColumn Header="路径" DisplayMemberBinding="{Binding Path= ProcessPath}" Width="350"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
             </TabItem>
-            <TabItem Header="TabItem" HorizontalAlignment="Left" Height="19.2" VerticalAlignment="Top" Width="59.2">
-                <Grid Background="#FFE5E5E5"/>
+            <TabItem Header="TabItem">
             </TabItem>
         </TabControl>
-        <ListView x:Name="listView1" HorizontalAlignment="Left" Height="125" Margin="0,371,0,0" VerticalAlignment="Top" Width="752">
+        <ListView Grid.Row="2" x:Name="listView1"  Margin="3" VerticalAlignment="Top" >
             <ListView.View>
                 <GridView>
-                    <GridViewColumn/>
+                    <GridViewColumn Header="2333"/>
                 </GridView>
             </ListView.View>
         </ListView>
-        <Path Data="M669.1,-12.9" Fill="#FFF4F4F5" HorizontalAlignment="Right" Height="1" Margin="0,-12.9,91.5,0" Stretch="Fill" Stroke="Black" VerticalAlignment="Top" Width="1"/>
-
     </Grid>
 </Window>
