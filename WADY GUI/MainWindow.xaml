@@ -21,7 +21,7 @@
         </Menu>
         <TabControl Grid.Row="1" x:Name="tabControl" HorizontalAlignment="Left"  VerticalAlignment="Top">
             <TabItem Header="TabItem">
-                <ListView x:Name="listView"  VerticalAlignment="Top" >
+                <ListView x:Name="listView" Background="{x:Null}" >
                     <ListView.View>
                         <GridView x:Name="listColumn">
                             <GridViewColumn Header="进程" Width="150" >

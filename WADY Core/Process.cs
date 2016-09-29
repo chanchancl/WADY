@@ -117,7 +117,7 @@ namespace WADY.Core
         }
         bool IsLastProcess(string name)
         {
-            return name == this.LastProcessName;
+            return name == LastProcessName;
         }
 
         ProcessInfo GetCurrentProcessInfo()
@@ -180,7 +180,6 @@ namespace WADY.Core
                 // 创建信息结构
                 CurrentInfo = new ProcessInfo(CurrentWindowProcess);
                 
-                // 创建时间信息
                 CurrentInfo.ProcessTimeInfo.Insert(0, new TimeInfo());
 
                 // 通过名字映射一下
@@ -189,7 +188,7 @@ namespace WADY.Core
             }
             else
                 CurrentInfo = InfoMap[Name];
-            LastProcessName = Name;
+
             return CurrentInfo;
         }
 
@@ -202,7 +201,7 @@ namespace WADY.Core
             CurrentInfo = GetCurrentProcessInfo();
             if (CurrentInfo == null)
                 return;
-            if (IsLastProcess(CurrentInfo.ProcessName))
+            if (IsLastProcess(CurrentInfo.ProcessName) || LastProcessName == null)
             {
                 // 说明在WADY sleep的时候，进程没有切换
 
@@ -213,10 +212,8 @@ namespace WADY.Core
             }
             else
             {
+                LastProcessName = CurrentInfo.ProcessName;
                 thisTime = new TimeInfo();
-                thisTime.Start = DateTime.Now;
-                thisTime.Last = TimeSpan.Zero;
-           
                 CurrentInfo.ProcessTimeInfo.Insert(0, thisTime);
             }
 
