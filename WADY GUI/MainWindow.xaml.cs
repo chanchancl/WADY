@@ -4,7 +4,6 @@ using System.Windows.Controls;
 using WADY.Core;
 using System.Threading;
 using System.Diagnostics;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Data;
@@ -28,7 +27,7 @@ namespace WADY.GUI
             helper.AddDelgate(ListViewUpdate);
         }
 
-
+        // actually,I'd not know why ListView designed as this.
 
         [DllImport("coredll.dll", SetLastError = true)]
         private static extern IntPtr ExtractIconEx(string fileName, int index, ref IntPtr hIconLarge, ref IntPtr hIconSmall, uint nIcons);
@@ -64,11 +63,36 @@ namespace WADY.GUI
         {
             //对Listview绑定的数据源进行更新
             var DataList = helper.QueryTotalTimeList();
-            bindingData.Clear();
+
+            int currentIndex = 0;
+            if (bindingData.Count == 0)
+            {
+                foreach (var i in DataList)
+                {
+                    bindingData.Add(i);
+                }
+            }
+            else
+            {
+                foreach (var i in DataList)
+                {
+                    if (!bindingData.Contains(i))
+                        bindingData.Add(i);
+                    else
+                    {
+                        var item = bindingData.IndexOf(i);
+                        bindingData.Move(item, currentIndex);
+                        currentIndex++;
+                    }
+                    
+                }
+            }
+
+            /*bindingData.Clear();
             foreach (var i in DataList)
             {
                 bindingData.Add(i);
-            }
+            }*/
 
 
 

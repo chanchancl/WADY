@@ -4,14 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WADY.GUI"
+        xmlns:Core="clr-namespace:WADY.Core;assembly=WADY.Core"
         x:Class="WADY.GUI.MainWindow"
         mc:Ignorable="d"
         Title="MainWindow" Loaded="Window_Loaded" >
-    <Grid>
+    <Grid x:Name="grid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="20"></RowDefinition>
-            <RowDefinition Height="3*"></RowDefinition>
-            <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
         <Menu Grid.Row="0" x:Name="menu" Height="20" Margin="0,0,-0.4,0" VerticalAlignment="Top">
             <MenuItem Header="我是谁">
@@ -21,7 +22,7 @@
         </Menu>
         <TabControl Grid.Row="1" x:Name="tabControl" HorizontalAlignment="Left"  VerticalAlignment="Top">
             <TabItem Header="TabItem">
-                <ListView x:Name="listView" Background="{x:Null}" >
+                <ListView x:Name="listView" >
                     <ListView.View>
                         <GridView x:Name="listColumn">
                             <GridViewColumn Header="进程" Width="150" >
@@ -29,8 +30,8 @@
                                     <DataTemplate>
                                         <Grid >
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="64" ></ColumnDefinition>
-                                                <ColumnDefinition MinWidth="128" ></ColumnDefinition>
+                                                <ColumnDefinition Width="64" />
+                                                <ColumnDefinition MinWidth="128" />
                                             </Grid.ColumnDefinitions>
                                             <Image Source="{Binding Pic}"/>
                                             <TextBlock Text="{Binding ProcessDescription}" Grid.Column="1"/>
@@ -38,23 +39,31 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn Header="进程名" DisplayMemberBinding="{Binding Path= ProcessName}" Width="70"/>
-                            <GridViewColumn Header="前台时间" DisplayMemberBinding="{Binding Path= TotalTime}" Width="77"/>
-                            <GridViewColumn Header="启动时间" DisplayMemberBinding="{Binding Path= StartTime}" Width="100"/>
-                            <GridViewColumn Header="路径" DisplayMemberBinding="{Binding Path= ProcessPath}" Width="350"/>
+                            <GridViewColumn Header="进程名" DisplayMemberBinding="{Binding ProcessName}" Width="70"/>
+                            <GridViewColumn Header="前台时间" DisplayMemberBinding="{Binding TotalTime}" Width="77"/>
+                            <GridViewColumn Header="启动时间" DisplayMemberBinding="{Binding StartTime}" Width="100"/>
+                            <GridViewColumn Header="路径" DisplayMemberBinding="{Binding ProcessPath}" Width="350"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
             </TabItem>
-            <TabItem Header="TabItem">
-            </TabItem>
+            <TabItem Header="TabItem"/>
         </TabControl>
-        <ListView Grid.Row="2" x:Name="listView1"  Margin="3" VerticalAlignment="Top" >
+        <ListView Grid.Row="2" x:Name="listView1"  Margin="3" VerticalAlignment="Top" IsSynchronizedWithCurrentItem="False">
             <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="2333"/>
+                <GridView >
+                    <GridViewColumn Header="2333" />
+                    <GridViewColumn Header="Who are you"/>
                 </GridView>
             </ListView.View>
+            <ListViewItem>
+                <ListViewItem.DataContext>
+                    <Core:ProcessInfo ProcessPath="path" ProcessName="name"/>
+                </ListViewItem.DataContext>
+            </ListViewItem>
+            <ListViewItem>
+                
+            </ListViewItem>
         </ListView>
     </Grid>
 </Window>
