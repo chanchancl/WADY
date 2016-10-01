@@ -63,6 +63,7 @@ namespace WADY.GUI
         {
             //对Listview绑定的数据源进行更新
             var DataList = helper.QueryTotalTimeList();
+            var select = listView.SelectedItem;
 
             int currentIndex = 0;
             if (bindingData.Count == 0)
@@ -84,9 +85,16 @@ namespace WADY.GUI
                         bindingData.Move(item, currentIndex);
                         currentIndex++;
                     }
-                    
                 }
             }
+            // 经测试，一旦bindingData移动了Item后，
+            // 列表中被选中的Item的会丢失“被选中”状态
+             
+
+            listView.ItemsSource = null;
+            listView.ItemsSource = bindingData;
+            // 刷新后继续选择该元素
+            listView.SelectedItem = select;
 
             /*bindingData.Clear();
             foreach (var i in DataList)
@@ -139,7 +147,7 @@ namespace WADY.GUI
             //var col = GridView.GetColumnCollection(listView);
 
             listView.ItemsSource = bindingData;
-            var col = GridView.GetColumnCollection(listView);
+            //var col = GridView.GetColumnCollection(listView);
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
