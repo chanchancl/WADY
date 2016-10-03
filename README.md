@@ -1,4 +1,5 @@
 # What Are You Doing (WADY)
+[![Build status](https://ci.appveyor.com/api/projects/status/3y0e1a0pmg75p5ey?svg=true)](https://ci.appveyor.com/project/chanchancl/wady)
 ## Description
 
 1.一个简单的小工具，来记录电脑前台进程所占时间比。
