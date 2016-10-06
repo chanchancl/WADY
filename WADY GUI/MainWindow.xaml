@@ -22,7 +22,7 @@
         </Menu>
         <TabControl Grid.Row="1" x:Name="tabControl">
             <TabItem Header="TabItem">
-                <ScrollViewer PanningRatio="0">
+                <ScrollViewer>
                     <ListView x:Name="listView" SelectionMode="Single" >
                         <ListView.View>
                             <GridView x:Name="listColumn">
@@ -58,14 +58,6 @@
                     <GridViewColumn Header="Who are you"/>
                 </GridView>
             </ListView.View>
-            <ListViewItem>
-                <ListViewItem.DataContext>
-                    <Core:ProcessInfo ProcessPath="path" ProcessName="name"/>
-                </ListViewItem.DataContext>
-            </ListViewItem>
-            <ListViewItem>
-
-            </ListViewItem>
         </ListView>
     </Grid>
 </Window>

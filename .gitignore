@@ -1,7 +1,5 @@
-*.suo
-*.exe
-WADY Core/bin
+build/
+.vs/
 WADY Core/obj
-WADY GUI/bin
 WADY GUI/obj
 packages/
