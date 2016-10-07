@@ -1,7 +1,7 @@
-﻿using System;
+﻿#region using
+using System;
 using System.Windows;
 using System.Windows.Controls;
-using WADY.Core;
 using System.Threading;
 using System.Diagnostics;
 using System.Drawing;
@@ -9,6 +9,9 @@ using System.Text;
 using System.Data;
 using System.Runtime.InteropServices;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using WADY.Core;
+#endregion
 
 namespace WADY.GUI
 {
@@ -66,21 +69,17 @@ namespace WADY.GUI
             var select = listView.SelectedItem;
 
             int currentIndex = 0;
-            if (bindingData.Count == 0)
-            {
-                foreach (var i in DataList)
-                {
+            if (bindingData.Count == 0) {
+                foreach (var i in DataList){
                     bindingData.Add(i);
                 }
             }
             else
             {
-                foreach (var i in DataList)
-                {
+                foreach (var i in DataList){
                     if (!bindingData.Contains(i))
                         bindingData.Add(i);
-                    else
-                    {
+                    else {
                         var item = bindingData.IndexOf(i);
                         bindingData.Move(item, currentIndex);
                         currentIndex++;
@@ -95,14 +94,6 @@ namespace WADY.GUI
             listView.ItemsSource = bindingData;
             // 刷新后继续选择该元素
             listView.SelectedItem = select;
-
-            /*bindingData.Clear();
-            foreach (var i in DataList)
-            {
-                bindingData.Add(i);
-            }*/
-
-
 
         }
 
@@ -147,7 +138,28 @@ namespace WADY.GUI
             //var col = GridView.GetColumnCollection(listView);
 
             listView.ItemsSource = bindingData;
+            bindingData.CollectionChanged += BindingData_CollectionChanged;
             //var col = GridView.GetColumnCollection(listView);
+        }
+
+        private void BindingData_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            // 只处理添加事件
+            if (e.Action != NotifyCollectionChangedAction.Add)
+                return;
+
+            GridView gv = listView.View as GridView;
+            if (gv != null)
+            {
+                foreach (GridViewColumn gvc in gv.Columns)
+                {
+                    if (gvc.Header.ToString() == "路径")
+                    {
+                        gvc.Width = gvc.ActualWidth;
+                        gvc.Width = Double.NaN;
+                    }
+                }
+            }
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)

@@ -22,7 +22,7 @@
         </Menu>
         <TabControl Grid.Row="1" x:Name="tabControl">
             <TabItem Header="TabItem">
-                <ScrollViewer>
+                <ScrollViewer Margin="1,1,10,1">
                     <ListView x:Name="listView" SelectionMode="Single" >
                         <ListView.View>
                             <GridView x:Name="listColumn">
@@ -41,8 +41,8 @@
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
                                 <GridViewColumn Header="进程名" DisplayMemberBinding="{Binding ProcessName}" />
-                                <GridViewColumn Header="前台时间" DisplayMemberBinding="{Binding TotalTime}" />
-                                <GridViewColumn Header="启动时间" DisplayMemberBinding="{Binding StartTime, StringFormat=\{0:F\}}" />
+                                <GridViewColumn Header="前台时间" DisplayMemberBinding="{Binding TotalTime}"  Width="60"/>
+                                <GridViewColumn Header="启动时间" DisplayMemberBinding="{Binding StartTime, StringFormat={}{0:F}}" />
                                 <GridViewColumn Header="路径" DisplayMemberBinding="{Binding ProcessPath}" />
                             </GridView>
                         </ListView.View>
