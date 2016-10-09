@@ -139,16 +139,7 @@ namespace WADY.GUI
 
             listView.ItemsSource = bindingData;
             bindingData.CollectionChanged += BindingData_CollectionChanged;
-            scroll.Width = scroll.ActualWidth;
-            scroll.Width = Double.NaN;
-            scroll.Height = Double.NaN;
             //var col = GridView.GetColumnCollection(listView);
-            listView.MouseWheel += ListView_MouseWheel;
-        }
-
-        private void ListView_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
-        {
-            scroll.Dispatcher.InvokeAsync()
         }
 
         private void BindingData_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

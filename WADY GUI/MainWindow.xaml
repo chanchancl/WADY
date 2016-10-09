@@ -7,7 +7,7 @@
         xmlns:Core="clr-namespace:WADY.Core;assembly=WADY.Core"
         x:Class="WADY.GUI.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Loaded="Window_Loaded" ResizeMode="CanMinimize" >
+        Title="MainWindow" Loaded="Window_Loaded"  >
     <Grid x:Name="grid">
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
@@ -22,8 +22,8 @@
         </Menu>
         <TabControl Grid.Row="1" x:Name="tabControl">
             <TabItem Header="TabItem">
-                <ScrollViewer Name="scroll" Margin="1,1,10,1">
-                    <ListView x:Name="listView" SelectionMode="Single" >
+                <!--<ScrollViewer Name="scroll" Margin="1,1,10,1">-->
+                    <ListView x:Name="listView" SelectionMode="Single" Margin="0,0,10,0" >
                         <ListView.View>
                             <GridView x:Name="listColumn">
                                 <GridViewColumn Header="进程" >
@@ -47,7 +47,7 @@
                             </GridView>
                         </ListView.View>
                     </ListView>
-                </ScrollViewer>
+                <!--</ScrollViewer>-->
             </TabItem>
             <TabItem Header="TabItem"/>
         </TabControl>
