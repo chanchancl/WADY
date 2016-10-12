@@ -10,7 +10,7 @@
 
 WPF学习：[LearnWPF]
 
-[LearnWPF]:chanchancl/LearnWPF
+[LearnWPF]:http://github.com/chanchancl/LearnWPF
 
 ## Build
 
